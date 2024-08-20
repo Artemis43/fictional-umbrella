@@ -43,6 +43,8 @@ dp.register_message_handler(backup.new_db, commands=['restore'])
 dp.register_message_handler(about_help.help, commands=['help'])
 dp.register_message_handler(about_help.about, commands=['about'])
 dp.register_message_handler(stop.stop, commands=['stop'])
+dp.register_callback_query_handler(start.process_callback_1, lambda c: c.data)
+dp.register_callback_query_handler(start.process_callback_2, lambda c: c.data)
 
 from utils.webhook import on_startup, on_shutdown
 

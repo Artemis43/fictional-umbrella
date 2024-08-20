@@ -42,10 +42,9 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Compose the UI message text
     text = (
         f"**Welcome to The Fitgirl Bot 🪄**\n\n"
-        f"**New game added every 3 hrs! Report to admin of any issues 👾**\n\n"
+        f"**New game added every 3 hrs 👾**\n\n"
         f"**Complete List of Games:** [Here](https://t.me/fitgirl_repacks_pc/2560)\n\n"
         f"**How to Use:** /help\n\n"
-        #f"**Admin:** @Hidden\_in\_matrix ❤️\n\n"
         f"**📁 Total Games:** {folder_count}\n\n"
         f"**Games: (Select letter 👇)**\n\n"
     )
@@ -65,7 +64,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
             text += f"|-📁 `{folder[0]}`\n\n"
         #for file in files:
             #text += f"|-💀 `{file[0]}`\n"
-    text += "`⬇ Report if no files`"
+    text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\nRefer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n`⬇ Report to Admin if no files`"
 
     try:
         if message_id:
@@ -74,6 +73,45 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
             await bot.send_message(chat_id, text, reply_markup=keyboard, parse_mode='Markdown')
     except exceptions.MessageNotModified:
         pass  # Handle the exception gracefully by ignoring it
+
+#Callback Query handler to filter UI based on inline selections
+async def process_callback_1(callback_query: types.CallbackQuery):
+    from main import bot
+    global current_upload_folder
+    user_id = callback_query.from_user.id
+
+    if not await is_user_member(user_id):
+        join_message = "Welcome to the Fitgirl Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        for channel in REQUIRED_CHANNELS:
+            join_message += f"{channel}\n"
+        await bot.answer_callback_query(callback_query.id)
+        await bot.send_message(callback_query.from_user.id, join_message)
+        return
+
+    code = callback_query.data
+
+    if code == 'back':
+        current_upload_folder = None
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id)
+    elif code == 'root':
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id)
+    elif code.startswith('letter_'):
+        selected_letter = code.split('_')[1]
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id, selected_letter=selected_letter)
+    else:
+        current_upload_folder = code
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id, current_folder=current_upload_folder)
+
+    await bot.answer_callback_query(callback_query.id)
+
+# Callback query handler for inline buttons
+async def process_callback_2(callback_query: types.CallbackQuery):
+    if callback_query.data == 'back':
+        # Logic to go back to the previous folder
+        await send_ui(callback_query.message.chat.id)  # This should be updated with the actual previous folder logic
+    elif callback_query.data == 'root':
+        await send_ui(callback_query.message.chat.id)
+    # Handle other callback data if necessary
 
 # Command to start the bot and show the UI
 async def start(message: types.Message):

@@ -22,10 +22,10 @@ STICKER_ID = os.environ.get('STICKER')
 DB_FILE_PATH = 'file_management.db'
 
 # To update games list (Without @)
-GROUP_USERNAME = os.environ.get('GROUP_USERNAME')
+GROUP_USERNAME = 'fitgirl_repacks_pc'
 
 # To update games list
-TOPIC_ID = os.environ.get('TOPIC_ID')
+TOPIC_ID = 2560
 
 # For Pyrogram client
 BOT_TOKEN = os.environ.get('TOKEN')
@@ -36,4 +36,4 @@ WEBHOOK_PATH = f'/webhook/{API_TOKEN}'
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 # List of required channels to join
-REQUIRED_CHANNELS = os.environ.get('SUBSCRIPTION').split(',') #['@TheFitgirlRepacks', '@fitgirl_repacks_pc']  # Add your channel usernames here
+REQUIRED_CHANNELS = os.environ.get('SUBSCRIPTION').split(',')

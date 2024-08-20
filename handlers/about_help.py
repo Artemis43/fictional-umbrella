@@ -15,9 +15,6 @@ async def help(message: types.Message):
     else:
         help_text = (
             "**The Fitgirl Bot 🪄**\n\n"
-            "/start - Start the bot\n"
-            "/help - Display this help message\n"
-            "/get <game\\_name> - Send with Game name to get all files\n\n"
             "**💫 How to Use:**\n\n"
             "|- Search for your game in the list\n\n"
             "|- Tap on the game name to copy it\n\n"
@@ -47,8 +44,7 @@ async def about(message: types.Message):
             "So, here it is. I made this bot to save your time downloading torrents 🙌\n\nHope this helps those curious and enthusiastic gamers out there 😄\n\nIn the end, I always recommend purchasing these games 👾\n\n"
             "This is the first bot I made. It took me 20 long days to make this bot working as it is now. The games are added automatically at regular intervals and our Archive is ever-growing 🔥\n\n"
             "Platform - `Render`\n"
-            "Usage limit - `0.1 CPU|512 MB (RAM)`\n"
-            "Framework - `Python-Flask`\n\n"
+            "Usage limit - `0.1 CPU|512 MB (RAM)`\n\n"
             "Happy Gaming 💥"
         )
         await message.reply(about_text, parse_mode='Markdown')

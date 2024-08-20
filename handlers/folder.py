@@ -112,6 +112,8 @@ async def delete_folder(message: types.Message):
             cursor.execute('DELETE FROM folders WHERE id = ?', (folder_id,))
             conn.commit()
 
+            await send_or_edit_message()
+
             await message.reply(f"Folder '{folder_name}' and its contents deleted.")
         else:
             await message.reply("Folder not found.")
