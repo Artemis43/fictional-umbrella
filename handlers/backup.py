@@ -17,7 +17,7 @@ async def send_backup(message: types.Message):
     conn.commit()
 
     # Path to the database file
-    db_file_path = 'file_management.db'
+    db_file_path = 'game_management.db'
     
     try:
         await bot.send_document(message.chat.id, types.InputFile(db_file_path))
@@ -38,4 +38,4 @@ async def new_db(message: types.Message):
         return
 
     set_bot_state('awaiting_new_db_upload', True)
-    await message.reply("Please upload the new 'file_management.db' file to replace the existing database.")
+    await message.reply("Please upload the new 'game_management.db' file to replace the existing database.")

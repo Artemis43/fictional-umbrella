@@ -23,7 +23,7 @@ async def handle_document(message: types.Message):
         return
 
     # Check if awaiting a new DB upload
-    if get_bot_state('awaiting_new_db_upload') and message.document.file_name == "file_management.db":
+    if get_bot_state('awaiting_new_db_upload') and message.document.file_name == "game_management.db":
         if str(user_id) not in ADMIN_IDS:
             set_bot_state('awaiting_new_db_upload', False)
             await message.reply("You are not authorized to upload a new database file.")

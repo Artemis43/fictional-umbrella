@@ -19,7 +19,7 @@ CHANNEL_ID = os.environ.get('CHANNEL')
 STICKER_ID = os.environ.get('STICKER')
 
 # Database file
-DB_FILE_PATH = 'file_management.db'
+DB_FILE_PATH = 'game_management.db'
 
 # To update games list (Without @)
 GROUP_USERNAME = 'fitgirl_repacks_pc'
@@ -37,3 +37,8 @@ WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 # List of required channels to join
 REQUIRED_CHANNELS = os.environ.get('SUBSCRIPTION').split(',')
+
+# DBHub.io Credentials
+API_KEY = os.environ.get('DB_API')
+DBOWNER = 'norse'
+DBNAME = 'game_management.db'

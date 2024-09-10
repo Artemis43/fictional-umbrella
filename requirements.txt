@@ -1,0 +1,6 @@
+aiogram-utils==0.1.4
+aiohttp==3.8.6
+psutil==6.0.0
+Pyrogram==2.0.106
+tgcrypto==1.2.5
+Flask==3.0.3

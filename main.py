@@ -26,7 +26,7 @@ dp.middleware.setup(LoggingMiddleware())
 # So that all admins can upload files simultaneously
 current_upload_folders = {}
 
-from handlers import start, folder, file, document, download, broadcast, backup, about_help, stop
+from handlers import start, folder, file, document, download, broadcast, backup, about_help, stop, sync
 
 # Register handlers
 dp.register_message_handler(start.start, commands=['start'])
@@ -43,6 +43,7 @@ dp.register_message_handler(backup.new_db, commands=['restore'])
 dp.register_message_handler(about_help.help, commands=['help'])
 dp.register_message_handler(about_help.about, commands=['about'])
 dp.register_message_handler(stop.stop, commands=['stop'])
+dp.register_message_handler(sync.sync_database_command, commands=['forcedsyncdb'])
 dp.register_callback_query_handler(start.process_callback_1, lambda c: c.data)
 dp.register_callback_query_handler(start.process_callback_2, lambda c: c.data)
 
