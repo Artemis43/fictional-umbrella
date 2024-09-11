@@ -74,7 +74,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     if not folders:
         #text += "Database sync in Progress 🔄\n"
         #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
-        text += f"▯▮▯▮▯▮▯▮▯▮▯▮▯▮\n\n"
+        text += f"_\n\n"
         text += "`⬇ Report to Admin if no files`\n"
         
         # Display the UI even if there are no folders
@@ -107,7 +107,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         # Files information
         #text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
         #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
-        text += f"▯▮▯▮▯▮▯▮▯▮▯▮▯▮\n\n"
+        text += f"_\n\n"
         text += "`⬇ Report to Admin if no files`\n"
 
         # Display the UI with folders
