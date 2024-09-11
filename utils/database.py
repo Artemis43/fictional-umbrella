@@ -1,88 +1,73 @@
 import asyncpg
-import logging
-from typing import Optional
+import os
+from dotenv import load_dotenv
 
-# Connection details
-DATABASE_URL = "postgresql://user=postgres.vpzreiwdcoyaobicckun password=4Rczj78ezNTFm?YK host=aws-0-ap-south-1.pooler.supabase.com port=6543 dbname=postgres"
+# Load environment variables from a .env file
+load_dotenv()
 
-# Database connection pool
-pool: Optional[asyncpg.pool.Pool] = None
+DATABASE_URL = {
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "database": os.getenv("DB_NAME"),
+    "host": os.getenv("DB_HOST"),
+    "port": os.getenv("DB_PORT")
+}
 
-async def create_pool():
-    global pool
-    if pool is None:
-        pool = await asyncpg.create_pool(DATABASE_URL, min_size=5, max_size=10)
-        logging.info("PostgreSQL connection pool created.")
+async def connect_to_db():
+    """Create a connection pool to the database."""
+    try:
+        pool = await asyncpg.create_pool(
+            user=DATABASE_URL["user"],
+            password=DATABASE_URL["password"],
+            database=DATABASE_URL["database"],
+            host=DATABASE_URL["host"],
+            port=DATABASE_URL["port"]
+        )
+        return pool
+    except Exception as e:
+        print(f"Error connecting to the database: {e}")
+        return None
 
-async def close_pool():
-    global pool
-    if pool is not None:
-        await pool.close()
-        logging.info("PostgreSQL connection pool closed.")
-
-async def fetch_all(query: str, *args):
+async def fetch_folders(pool):
+    """Fetch all folders."""
     async with pool.acquire() as connection:
-        return await connection.fetch(query, *args)
+        rows = await connection.fetch("SELECT * FROM folders;")
+        return rows
 
-async def fetch_one(query: str, *args):
+async def insert_folder(pool, name, parent_id=None):
+    """Insert a new folder."""
     async with pool.acquire() as connection:
-        return await connection.fetchrow(query, *args)
+        await connection.execute(
+            "INSERT INTO folders (name, parent_id) VALUES ($1, $2);",
+            name, parent_id
+        )
 
-async def execute(query: str, *args):
+async def fetch_files(pool, folder_id):
+    """Fetch files by folder_id."""
     async with pool.acquire() as connection:
-        await connection.execute(query, *args)
+        rows = await connection.fetch("SELECT * FROM files WHERE folder_id=$1;", folder_id)
+        return rows
 
-async def setup_database():
-    queries = [
-        '''
-        CREATE TABLE IF NOT EXISTS folders (
-            id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            parent_id INTEGER,
-            FOREIGN KEY (parent_id) REFERENCES folders (id)
-        )
-        ''',
-        '''
-        CREATE TABLE IF NOT EXISTS files (
-            id SERIAL PRIMARY KEY,
-            file_id TEXT NOT NULL,
-            file_name TEXT NOT NULL,
-            folder_id INTEGER,
-            message_id INTEGER,
-            FOREIGN KEY (folder_id) REFERENCES folders (id)
-        )
-        ''',
-        '''
-        CREATE TABLE IF NOT EXISTS users (
-            user_id BIGINT PRIMARY KEY
-        )
-        ''',
-        '''
-        CREATE TABLE IF NOT EXISTS bot_messages (
-            id SERIAL PRIMARY KEY,
-            chat_id TEXT,
-            topic_id INTEGER,
-            message_id INTEGER
-        )
-        ''',
-        '''
-        CREATE TABLE IF NOT EXISTS bot_state (
-            key TEXT PRIMARY KEY,
-            value INTEGER
-        )
-        '''
-    ]
-
+async def insert_file(pool, file_id, file_name, folder_id, message_id):
+    """Insert a new file."""
     async with pool.acquire() as connection:
-        for query in queries:
-            await connection.execute(query)
-        logging.info("Database tables created or verified.")
+        await connection.execute(
+            "INSERT INTO files (file_id, file_name, folder_id, message_id) VALUES ($1, $2, $3, $4);",
+            file_id, file_name, folder_id, message_id
+        )
 
-# Ensure the database setup is complete before running the bot
-async def initialize_database():
-    await create_pool()
-    await setup_database()
+async def fetch_users(pool):
+    """Fetch all users."""
+    async with pool.acquire() as connection:
+        rows = await connection.fetch("SELECT * FROM users;")
+        return rows
 
-# Call this function to close the database connection pool when shutting down
-async def close_database():
-    await close_pool()
+async def insert_user(pool, user_id):
+    """Insert a new user."""
+    async with pool.acquire() as connection:
+        await connection.execute(
+            "INSERT INTO users (user_id) VALUES ($1);",
+            user_id
+        )
+
+# Add more functions as needed for bot_messages and bot_state tables
