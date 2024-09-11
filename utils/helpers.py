@@ -1,8 +1,7 @@
 from pyrogram.errors import MessageNotModified
 from config import GROUP_USERNAME, TOPIC_ID
-
 import asyncpg
-from database import connect_to_db
+from utils.database import connect_to_db
 
 # Function to add a user to the database asynchronously
 async def add_user_to_db(user_id):
