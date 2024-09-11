@@ -39,6 +39,11 @@ async def stop(message: types.Message):
         logging.error(f"Error sending backup file: {e}")
         await message.reply("Error sending backup file. Please try again later.")
 
-    # Use sys.exit() to stop the bot
+    # Before stopping, remove the restart flag and stop the bot cleanly
     print("Bot is stopping with sys.exit()...")
+
+    # Ensure stop flag is set
+    if os.path.exists(FLAG_FILE_PATH):
+        os.remove(FLAG_FILE_PATH)  # Remove the restart flag to avoid unwanted restart
+    
     sys.exit("Bot stopped by admin command.")

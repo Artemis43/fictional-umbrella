@@ -56,12 +56,12 @@ STOP_FLAG_FILE_PATH = 'stop_flag.tmp'
 
 # Function to restart the script using subprocess
 def restart_script():
-    # Check if the bot was manually stopped
+    # If the bot was manually stopped, do not restart
     if os.path.exists(STOP_FLAG_FILE_PATH):
         print("Manual stop detected. Skipping restart.")
         return
 
-    # Check if a restart is already in progress
+    # Prevent multiple restarts
     if os.path.exists(FLAG_FILE_PATH):
         print("Script already in the process of restarting. Skipping restart.")
         return
