@@ -9,6 +9,8 @@ async def on_startup(dispatcher: Dispatcher):
     logging.info("Setting up webhook...")
     await bot.set_webhook(WEBHOOK_URL)
     logging.info("Webhook setup complete.")
+    from utils.database import connect_to_db
+    await connect_to_db()
 
 # Function to be called on bot shutdown
 async def on_shutdown(dispatcher: Dispatcher):

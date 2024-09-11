@@ -1,10 +1,7 @@
 import asyncpg
 import os
-#from dotenv import load_dotenv
+import asyncpg
 
-# Load environment variables from a .env file
-#load_dotenv()
-#user=postgres.vpzreiwdcoyaobicckun password=[YOUR-PASSWORD] host=aws-0-ap-south-1.pooler.supabase.com port=6543 dbname=postgres
 DATABASE_URL = {
     "user": "postgres.vpzreiwdcoyaobicckun",
     "password": "4Rczj78ezNTFm?YK",
@@ -13,8 +10,11 @@ DATABASE_URL = {
     "port": 6543
 }
 
+pool = None
+
 async def connect_to_db():
     """Create a connection pool to the database."""
+    global pool
     try:
         pool = await asyncpg.create_pool(
             user=DATABASE_URL["user"],
@@ -23,10 +23,14 @@ async def connect_to_db():
             host=DATABASE_URL["host"],
             port=DATABASE_URL["port"]
         )
-        return pool
     except Exception as e:
         print(f"Error connecting to the database: {e}")
-        return None
+
+async def close_db_pool():
+    """Close the connection pool."""
+    global pool
+    if pool:
+        await pool.close()
 
 async def fetch_folders(pool):
     """Fetch all folders."""
