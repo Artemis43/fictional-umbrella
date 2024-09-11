@@ -60,7 +60,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Initialize folders as an empty list to avoid UnboundLocalError
     folders = []
 
-    # Fetch and list folders and files based on the current folder or selected letter
+    # Fetch and list folders based on the selected letter
     if selected_letter:
         if selected_letter == "#":
             cursor.execute('SELECT name FROM folders WHERE parent_id IS NULL AND (name GLOB ? OR name GLOB ?) ORDER BY name', ('[^A-Za-z0-9]*', '[!@#$%^&*()_+{}|:<>?]*'))
@@ -71,8 +71,8 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Check if there are no folders
     if not folders:
         text += "No folders available. Please wait while the database is being synced.\n"
-        
-        # Display the UI even if there are no folders
+
+        # Display the UI with the initial message
         try:
             if message_id:
                 await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
@@ -88,8 +88,34 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
             async with sync_lock:
                 if last_sync_time is None or (datetime.now() - last_sync_time) >= timedelta(minutes=20):
                     last_sync_time = datetime.now()  # Update the last sync time
-                    # Run sync in the background without blocking UI
-                    asyncio.create_task(sync.sync_database(api_key=API_KEY, db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH))
+
+                    # Run sync in the background and wait for it to complete
+                    await sync.sync_database(api_key=API_KEY, db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH)
+
+                    # After sync, re-fetch folders and update the UI
+                    cursor.execute('SELECT name FROM folders WHERE parent_id IS NULL ORDER BY name')
+                    folders = cursor.fetchall()
+
+                    if folders:
+                        # Update the UI after sync
+                        text = (
+                            f"**Welcome to The Fitgirl Bot 🪄**\n\n"
+                            f"**New game added every 3 hrs 👾**\n\n"
+                            f"**Complete List of Games:** [Here](https://t.me/fitgirl_repacks_pc/2560)\n\n"
+                            f"**How to Use:** /help\n\n"
+                            f"**📁 Total Games:** {folder_count}\n\n"
+                            f"**Games: (Select letter 👇)**\n\n"
+                        )
+                        for folder in folders:
+                            text += f"|-📁 `{folder[0]}`\n\n"
+
+                        try:
+                            if message_id:
+                                await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
+                            else:
+                                await bot.send_message(chat_id, text, reply_markup=keyboard, parse_mode='Markdown')
+                        except exceptions.MessageNotModified:
+                            pass
                 else:
                     print("Sync is already in progress. Please wait.")
         else:
@@ -98,7 +124,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         # Add folders to the text
         for folder in folders:
             text += f"|-📁 `{folder[0]}`\n\n"
-        
+
         # Files information
         text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
         text += "Refer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
