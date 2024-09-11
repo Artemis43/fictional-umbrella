@@ -1,7 +1,7 @@
 from aiogram import types
 from config import REQUIRED_CHANNELS
 from middlewares.authorization import is_private_chat, is_user_member
-from utils.database import cursor
+from utils.database import connect_to_db
 
 # Command to retrieve and send all files in a specified folder
 async def get_all_files(message: types.Message):
@@ -20,20 +20,19 @@ async def get_all_files(message: types.Message):
             await message.reply("Please specify a game name.")
             return
 
-        # Get the folder ID
-        cursor.execute('SELECT id FROM folders WHERE name = ?', (folder_name,))
-        folder_id = cursor.fetchone()
-        if folder_id:
-            folder_id = folder_id[0]
+        # Get the folder ID from the database
+        pool = await connect_to_db()
+        async with pool.acquire() as connection:
+            folder_id = await connection.fetchval('SELECT id FROM folders WHERE name = $1', folder_name)
 
-            # Get the file IDs and names in the folder
-            cursor.execute('SELECT file_id, file_name FROM files WHERE folder_id = ?', (folder_id,))
-            files = cursor.fetchall()
+            if folder_id:
+                # Get the file IDs and names in the folder
+                files = await connection.fetch('SELECT file_id, file_name FROM files WHERE folder_id = $1', folder_id)
 
-            if files:
-                for file in files:
-                    await bot.send_document(message.chat.id, file[0], caption=file[1])
+                if files:
+                    for file in files:
+                        await bot.send_document(message.chat.id, file['file_id'], caption=file['file_name'])
+                else:
+                    await message.reply("No files found in the specified game.")
             else:
-                await message.reply("No files found in the specified game.")
-        else:
-            await message.reply("Game not found.")
+                await message.reply("Game not found.")

@@ -3,9 +3,10 @@ import sys
 import os
 from aiogram import types
 from middlewares.authorization import is_private_chat, is_user_member
-from utils.database import cursor, conn
 from utils.helpers import get_current_upload_folder, set_bot_state, get_bot_state
 from config import REQUIRED_CHANNELS, ADMIN_IDS, DB_FILE_PATH, CHANNEL_ID
+from utils.database import connect_to_db
+from utils.helpers import get_bot_state, set_bot_state, get_current_upload_folder
 
 # Handler for incoming documents
 async def handle_document(message: types.Message):
@@ -68,23 +69,23 @@ async def handle_document(message: types.Message):
 
     # Determine the folder ID for the current upload folder
     current_upload_folder = get_current_upload_folder(user_id)
-    if current_upload_folder:
-        cursor.execute('SELECT id FROM folders WHERE name = ?', (current_upload_folder,))
-        folder_id = cursor.fetchone()
-        if folder_id:
-            folder_id = folder_id[0]
+
+    # Establish a connection to the database
+    pool = await connect_to_db()
+    async with pool.acquire() as connection:
+        if current_upload_folder:
+            folder_id = await connection.fetchval('SELECT id FROM folders WHERE name = $1', current_upload_folder)
         else:
             folder_id = None
-    else:
-        folder_id = None
 
-    # Send the file to the channel and get the message ID
-    sent_message = await bot.send_document(CHANNEL_ID, file_id, caption=f"New file uploaded: {file_name}")
-    message_id = sent_message.message_id
+        # Send the file to the channel and get the message ID
+        sent_message = await bot.send_document(CHANNEL_ID, file_id, caption=f"New file uploaded: {file_name}")
+        message_id = sent_message.message_id
 
-    # Insert the file into the database with the message ID
-    cursor.execute('INSERT INTO files (file_id, file_name, folder_id, message_id) VALUES (?, ?, ?, ?)', 
-                    (file_id, file_name, folder_id, message_id))
-    conn.commit()
+        # Insert the file into the database with the message ID
+        await connection.execute('''
+            INSERT INTO files (file_id, file_name, folder_id, message_id) 
+            VALUES ($1, $2, $3, $4)
+        ''', file_id, file_name, folder_id, message_id)
 
     await message.reply(f"File '{file_name}' uploaded successfully.")
