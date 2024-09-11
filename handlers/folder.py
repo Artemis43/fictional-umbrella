@@ -1,5 +1,4 @@
 from aiogram import types
-from utils.database import cursor, conn
 from middlewares.authorization import is_user_member, is_private_chat
 from utils.helpers import set_current_upload_folder, send_or_edit_message
 from config import ADMIN_IDS, REQUIRED_CHANNELS, CHANNEL_ID
