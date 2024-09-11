@@ -6,8 +6,15 @@ from utils.database import add_user_to_db, cursor, conn
 from config import REQUIRED_CHANNELS, STICKER_ID, ADMIN_IDS, API_KEY, DB_FILE_PATH, DBNAME, DBOWNER
 from datetime import datetime, timedelta
 
+# Global variables to track the last sync time and the lock
+last_sync_time = None
+sync_lock = asyncio.Lock()
+
 async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter=None):
     from main import bot
+    from handlers import sync  # Assuming sync module is in handlers
+    global last_sync_time
+
     # Fetch the number of files and folders
     cursor.execute('SELECT COUNT(*) FROM folders')
     folder_count = cursor.fetchone()[0]
@@ -23,7 +30,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     keyboard = InlineKeyboardMarkup()
 
     # Alphabet buttons
-    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ##(."<1234789
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     alphabet_buttons = [InlineKeyboardButton(letter, callback_data=f'letter_{letter}') for letter in alphabet]
 
     # Add a button for symbols
@@ -32,7 +39,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Add alphabet buttons in rows of 5-6 buttons per row
     row_width = 7
     for i in range(0, len(alphabet_buttons), row_width):
-        keyboard.row(*alphabet_buttons[i:i+row_width])
+        keyboard.row(*alphabet_buttons[i:i + row_width])
 
     # Add navigation buttons only
     if current_folder:
@@ -62,18 +69,48 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
         # Add folders and files to the text
         for folder in folders:
-            text += f"|-📁 {folder[0]}\n\n"
-        #for file in files:
-            #text += f"|-💀 {file[0]}\n"
-    text += "Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.\n\nRefer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n⬇ Report to Admin if no files"
+            text += f"|-📁 `{folder[0]}`\n\n"
 
-    try:
-        if message_id:
-            await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
+    # Check if there are no folders
+    if not folders:
+        text += "No folders available. Please wait while the database is being synced.\n"
+        
+        # Display the UI even if there are no folders
+        try:
+            if message_id:
+                await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
+            else:
+                await bot.send_message(chat_id, text, reply_markup=keyboard, parse_mode='Markdown')
+        except exceptions.MessageNotModified:
+            pass  # Handle the exception gracefully by ignoring it
+
+        # Check if at least 20 minutes have passed since the last sync
+        now = datetime.now()
+        if last_sync_time is None or (now - last_sync_time) >= timedelta(minutes=20):
+            # Acquire the lock to ensure only one sync operation runs
+            async with sync_lock:
+                if last_sync_time is None or (datetime.now() - last_sync_time) >= timedelta(minutes=20):
+                    last_sync_time = datetime.now()  # Update the last sync time
+                    # Run sync in the background without blocking UI
+                    asyncio.create_task(sync.sync_database(api_key=API_KEY, db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH))
+                else:
+                    print("Sync is already in progress. Please wait.")
         else:
-            await bot.send_message(chat_id, text, reply_markup=keyboard, parse_mode='Markdown')
-    except exceptions.MessageNotModified:
-        pass  # Handle the exception gracefully by ignoring it
+            print("Sync was recently performed. Please try again later.")
+    else:
+        # Files information
+        text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
+        text += "Refer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        text += "`⬇ Report to Admin if no files`\n"
+
+        # Display the UI with folders
+        try:
+            if message_id:
+                await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
+            else:
+                await bot.send_message(chat_id, text, reply_markup=keyboard, parse_mode='Markdown')
+        except exceptions.MessageNotModified:
+            pass  # Handle the exception gracefully by ignoring it
 
 #Callback Query handler to filter UI based on inline selections
 async def process_callback_1(callback_query: types.CallbackQuery):

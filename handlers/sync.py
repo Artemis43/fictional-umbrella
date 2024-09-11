@@ -52,16 +52,9 @@ def replace_local_database(db_path, temp_db_path):
     else:
         print(f"Temporary database file not found: {temp_db_path}")
 
-STOP_FLAG_FILE_PATH = 'stop_flag.tmp'
-
 # Function to restart the script using subprocess
 def restart_script():
-    # If the bot was manually stopped, do not restart
-    if os.path.exists(STOP_FLAG_FILE_PATH):
-        print("Manual stop detected. Skipping restart.")
-        return
-
-    # Prevent multiple restarts
+    # Only restart if the script is not already being restarted
     if os.path.exists(FLAG_FILE_PATH):
         print("Script already in the process of restarting. Skipping restart.")
         return
@@ -69,7 +62,7 @@ def restart_script():
     # Create the flag file to indicate a restart is in progress
     with open(FLAG_FILE_PATH, 'w') as flag_file:
         flag_file.write('restart')
-
+    
     print("Restarting script...")
     try:
         subprocess.run([sys.executable] + sys.argv, check=True)
@@ -80,14 +73,8 @@ def restart_script():
         if os.path.exists(FLAG_FILE_PATH):
             os.remove(FLAG_FILE_PATH)
 
-STOP_FLAG_FILE_PATH = 'stop_flag.tmp'
-
+# Main sync function
 def sync_database(api_key, db_owner, db_name, db_path):
-    # Check if the bot is being stopped, if so, skip the sync process
-    if os.path.exists(STOP_FLAG_FILE_PATH):
-        print("Bot is in stop process. Skipping database sync.")
-        return
-    
     temp_db_path = db_path + '.tmp'
     
     # Download the new database
@@ -106,7 +93,7 @@ async def sync_database_command(message: types.Message):
     if not is_private_chat(message):
         return
     if str(message.from_user.id) not in ADMIN_IDS:
-        await message.reply("You are not authorized to access the database.")
+        await message.reply("You are not authorized to stop the bot.")
         return
     sync_database(api_key=API_KEY , db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH)
     await message.reply("Database has now been synced. You can use the bot now", parse_mode=ParseMode.MARKDOWN)
