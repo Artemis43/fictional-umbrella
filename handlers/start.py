@@ -55,8 +55,8 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         f"• [Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
         f"• How to Use: /help\n"
         f"**📁 Total Games:** {folder_count}\n\n"
-        f"⟫* If the total count is 0, try again after 20 secs.\n\n"
-        f"_\n\n"
+        f"* If the total count is 0, try again after 20 secs.\n\n"
+        #f"_\n\n"
     )
 
     # Initialize folders as an empty list to avoid UnboundLocalError
@@ -74,7 +74,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     if not folders:
         #text += "Database sync in Progress 🔄\n"
         #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
-        text += f"_\n\n"
+        #text += f"_\n\n"
         text += "`⬇ Report to Admin if no files`\n"
         
         # Display the UI even if there are no folders
