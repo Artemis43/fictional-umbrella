@@ -9,7 +9,7 @@ import os
 
 async def stop(message: types.Message):
     from main import bot
-    
+
     # Prevent the restart logic when stopping the bot manually
     if os.path.exists(FLAG_FILE_PATH):
         os.remove(FLAG_FILE_PATH)
@@ -26,12 +26,17 @@ async def stop(message: types.Message):
 
     # Path to the database file
     db_file_path = 'game_management.db'
-    
+
     try:
         await bot.send_document(message.chat.id, types.InputFile(db_file_path))
     except Exception as e:
         logging.error(f"Error sending backup file: {e}")
         await message.reply("Error sending backup file. Please try again later.")
 
-    # Ensure the bot exits gracefully and does not trigger a restart
-    sys.exit("Bot stopped by admin command.")
+    # Safely shut down the bot instead of using sys.exit()
+    print("Stopping bot gracefully...")
+    await bot.session.close()  # Close bot session
+    await bot.shutdown()  # Shutdown the bot
+
+    # Manually raise a SystemExit to stop the bot
+    raise SystemExit("Bot stopped by admin command.")

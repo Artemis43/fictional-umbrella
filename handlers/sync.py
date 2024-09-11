@@ -54,11 +54,11 @@ def replace_local_database(db_path, temp_db_path):
 
 # Function to restart the script using subprocess
 def restart_script():
-    # Only restart if the script is not already being restarted
+    # Check if a manual stop was initiated
     if os.path.exists(FLAG_FILE_PATH):
-        print("Script already in the process of restarting. Skipping restart.")
+        print("Script already in the process of restarting or stopping. Skipping restart.")
         return
-    
+
     # Create the flag file to indicate a restart is in progress
     with open(FLAG_FILE_PATH, 'w') as flag_file:
         flag_file.write('restart')
