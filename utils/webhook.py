@@ -62,7 +62,7 @@ def upload_database(api_key, db_name, file_path):
     else:
         print(f"Failed to upload database: {response_content}")
 
-def start_periodic_upload(api_key, db_name, db_path, interval=1800):
+def start_periodic_upload(api_key, db_name, db_path, interval=900):
     def upload_task():
         while True:
             # First, delete any existing database with the same name
