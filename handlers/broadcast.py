@@ -2,7 +2,7 @@ import logging
 from aiogram import types
 from config import ADMIN_IDS
 from middlewares.authorization import is_private_chat
-from utils.database import fetch_users, execute
+from utils.database import fetch_users
 
 async def broadcast_message(message: types.Message):
     if not is_private_chat(message):
