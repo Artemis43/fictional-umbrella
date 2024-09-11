@@ -8,7 +8,9 @@ from utils.database import conn
 async def on_startup(dispatcher):
     from main import bot
     await bot.set_webhook(WEBHOOK_URL)
-
+    
+    from handlers import sync
+    sync.sync_database(api_key=API_KEY , db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH)
      # Start the periodic upload in a background thread
     start_periodic_upload(api_key= API_KEY, db_name= DBNAME, db_path= DB_FILE_PATH)
 
