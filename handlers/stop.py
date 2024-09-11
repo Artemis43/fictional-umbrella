@@ -10,6 +10,14 @@ import os
 async def stop(message: types.Message):
     from main import bot
     
+    # Check if the user is in the users table
+    cursor.execute('SELECT user_id FROM users WHERE user_id = ?', (message.from_user.id,))
+    user_exists = cursor.fetchone()
+
+    if not user_exists:
+        await message.reply("You are not authorized to stop the bot.")
+        return
+    
     # Prevent the restart logic when stopping the bot manually
     if os.path.exists(FLAG_FILE_PATH):
         os.remove(FLAG_FILE_PATH)
