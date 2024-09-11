@@ -10,7 +10,7 @@ async def get_all_files(message: types.Message):
     from main import bot
     user_id = message.from_user.id
     if not await is_user_member(user_id):
-        join_message = "Welcome to the Fitgirl Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
         for channel in REQUIRED_CHANNELS:
             join_message += f"{channel}\n"
         await message.reply(join_message)

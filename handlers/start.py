@@ -34,7 +34,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     alphabet_buttons = [InlineKeyboardButton(letter, callback_data=f'letter_{letter}') for letter in alphabet]
 
     # Add a button for symbols
-    alphabet_buttons.insert(0, InlineKeyboardButton("❗", url='https://t.me/Fitgirl_adminbot'))
+    alphabet_buttons.insert(0, InlineKeyboardButton("❗", url='https://t.me/Art3mis_adminbot'))
 
     # Add alphabet buttons in rows of 5-6 buttons per row
     row_width = 7
@@ -49,8 +49,8 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
     # Compose the UI message text
     text = (
-        f"**Welcome to The Fitgirl Bot 🪄**\n\n"
-        f"**New game added every 3 hrs 👾**\n\n"
+        f"**Welcome to PC Games Bot 🪄**\n\n"
+        f"**New game added every day 👾**\n\n"
         f"**Complete List of Games:** [Here](https://t.me/fitgirl_repacks_pc/2560)\n\n"
         f"**How to Use:** /help\n\n"
         f"**📁 Total Games:** {folder_count}\n\n"
@@ -60,7 +60,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Initialize folders as an empty list to avoid UnboundLocalError
     folders = []
 
-    # Fetch and list folders based on the selected letter
+    # Fetch and list folders and files based on the current folder or selected letter
     if selected_letter:
         if selected_letter == "#":
             cursor.execute('SELECT name FROM folders WHERE parent_id IS NULL AND (name GLOB ? OR name GLOB ?) ORDER BY name', ('[^A-Za-z0-9]*', '[!@#$%^&*()_+{}|:<>?]*'))
@@ -70,9 +70,11 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
     # Check if there are no folders
     if not folders:
-        text += "No folders available. Please wait while the database is being synced.\n"
-
-        # Display the UI with the initial message
+        text += "Database sync in Progress 🔄\n"
+        text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        text += "`⬇ Report to Admin if no files`\n"
+        
+        # Display the UI even if there are no folders
         try:
             if message_id:
                 await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
@@ -88,34 +90,8 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
             async with sync_lock:
                 if last_sync_time is None or (datetime.now() - last_sync_time) >= timedelta(minutes=20):
                     last_sync_time = datetime.now()  # Update the last sync time
-
-                    # Run sync in the background and wait for it to complete
-                    await sync.sync_database(api_key=API_KEY, db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH)
-
-                    # After sync, re-fetch folders and update the UI
-                    cursor.execute('SELECT name FROM folders WHERE parent_id IS NULL ORDER BY name')
-                    folders = cursor.fetchall()
-
-                    if folders:
-                        # Update the UI after sync
-                        text = (
-                            f"**Welcome to The Fitgirl Bot 🪄**\n\n"
-                            f"**New game added every 3 hrs 👾**\n\n"
-                            f"**Complete List of Games:** [Here](https://t.me/fitgirl_repacks_pc/2560)\n\n"
-                            f"**How to Use:** /help\n\n"
-                            f"**📁 Total Games:** {folder_count}\n\n"
-                            f"**Games: (Select letter 👇)**\n\n"
-                        )
-                        for folder in folders:
-                            text += f"|-📁 `{folder[0]}`\n\n"
-
-                        try:
-                            if message_id:
-                                await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
-                            else:
-                                await bot.send_message(chat_id, text, reply_markup=keyboard, parse_mode='Markdown')
-                        except exceptions.MessageNotModified:
-                            pass
+                    # Run sync in the background without blocking UI
+                    asyncio.create_task(sync.sync_database(api_key=API_KEY, db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH))
                 else:
                     print("Sync is already in progress. Please wait.")
         else:
@@ -124,10 +100,10 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         # Add folders to the text
         for folder in folders:
             text += f"|-📁 `{folder[0]}`\n\n"
-
+        
         # Files information
-        text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
-        text += "Refer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        #text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
+        text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
         text += "`⬇ Report to Admin if no files`\n"
 
         # Display the UI with folders
@@ -146,7 +122,7 @@ async def process_callback_1(callback_query: types.CallbackQuery):
     user_id = callback_query.from_user.id
 
     if not await is_user_member(user_id):
-        join_message = "Welcome to the Fitgirl Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
         for channel in REQUIRED_CHANNELS:
             join_message += f"{channel}\n"
         await bot.answer_callback_query(callback_query.id)
@@ -188,7 +164,7 @@ async def start(message: types.Message):
     
     # Commented out the old code
     # if not await is_user_member(user_id):
-    #     join_message = "Welcome to the Fitgirl Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+    #     join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
     #     for channel in REQUIRED_CHANNELS:
     #         join_message += f"{channel}\n"
     #     await message.reply(join_message)
@@ -201,7 +177,7 @@ async def start(message: types.Message):
         await asyncio.sleep(3)
         await bot.delete_message(message.chat.id, sticker_msg.message_id)
         #await asyncio.sleep(1)
-        join_message = "Welcome to the Fitgirl Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
         keyboard = InlineKeyboardMarkup(row_width=1)
         for channel in REQUIRED_CHANNELS:
             button = InlineKeyboardButton(text=channel, url=f"https://t.me/{channel.lstrip('@')}")
