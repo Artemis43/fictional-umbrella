@@ -6,15 +6,8 @@ from utils.database import add_user_to_db, cursor, conn
 from config import REQUIRED_CHANNELS, STICKER_ID, ADMIN_IDS, API_KEY, DB_FILE_PATH, DBNAME, DBOWNER
 from datetime import datetime, timedelta
 
-# Global variables to track the last sync time and the lock
-last_sync_time = None
-sync_lock = asyncio.Lock()
-
 async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter=None):
     from main import bot
-    from handlers import sync  # Import the sync module
-    global last_sync_time
-
     # Fetch the number of files and folders
     cursor.execute('SELECT COUNT(*) FROM folders')
     folder_count = cursor.fetchone()[0]
@@ -30,7 +23,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     keyboard = InlineKeyboardMarkup()
 
     # Alphabet buttons
-    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ##(."<1234789
     alphabet_buttons = [InlineKeyboardButton(letter, callback_data=f'letter_{letter}') for letter in alphabet]
 
     # Add a button for symbols
@@ -67,43 +60,13 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         cursor.execute('SELECT file_name FROM files WHERE folder_id IS NULL ORDER BY file_name')
         files = cursor.fetchall()
 
-        # Check if there are no folders and files
-        if not folders and not files:
-            text += "No games found. Please wait while the database is being synced.\n"
-            
-            # Display the UI even if there are no folders/files
-            try:
-                if message_id:
-                    await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
-                else:
-                    await bot.send_message(chat_id, text, reply_markup=keyboard, parse_mode='Markdown')
-            except exceptions.MessageNotModified:
-                pass  # Handle the exception gracefully by ignoring it
+        # Add folders and files to the text
+        for folder in folders:
+            text += f"|-📁 {folder[0]}\n\n"
+        #for file in files:
+            #text += f"|-💀 {file[0]}\n"
+    text += "Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.\n\nRefer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n⬇ Report to Admin if no files"
 
-            # Check if at least 20 minutes have passed since the last sync
-            now = datetime.now()
-            if last_sync_time is None or (now - last_sync_time) >= timedelta(minutes=20):
-                # Acquire the lock to ensure only one sync operation runs
-                async with sync_lock:
-                    if last_sync_time is None or (datetime.now() - last_sync_time) >= timedelta(minutes=20):
-                        last_sync_time = datetime.now()  # Update the last sync time
-                        # Run sync in the background without blocking UI
-                        asyncio.create_task(sync.sync_database(api_key=API_KEY, db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH))
-                    else:
-                        print("Sync is already in progress. Please wait.")
-            else:
-                print("Sync was recently performed. Please try again later.")
-
-        else:
-            # Add folders and files to the text
-            for folder in folders:
-                text += f"|-📁 `{folder[0]}`\n\n"
-            # for file in files:
-                # text += f"|-💀 `{file[0]}`\n"
-
-    text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\nRefer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n`⬇ Report to Admin if no files`"
-
-    # Display the UI with folders or empty message
     try:
         if message_id:
             await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text, reply_markup=keyboard, parse_mode='Markdown')
