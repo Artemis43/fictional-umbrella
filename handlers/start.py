@@ -50,12 +50,12 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Compose the UI message text
     text = (
         f"**Welcome to PC Games Bot 🪄**\n\n"
-        f"**Quick Links:**\n\n"
-        f"• [List of Games](https://t.me/fitgirl_repacks_pc/2560)\n"
-        f"• [Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
-        f"• How to Use: /help\n"
-        f"**📁 Total Games:** {folder_count}\n\n"
-        f"* If the total count is 0, try again after 20 secs.\n\n"
+        #f"**Quick Links:**\n\n"
+        #f"• [List of Games](https://t.me/fitgirl_repacks_pc/2560)\n"
+        #f"• [Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        #f"• How to Use: /help\n"
+        #f"**📁 Total Games:** {folder_count}\n\n"
+        #f"* If the total count is 0, try again after 20 secs.\n\n"
         #f"_\n\n"
     )
 
@@ -107,7 +107,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         # Files information
         #text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
         #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
-        text += f"_\n\n"
+        #text += f"_\n\n"
         text += "`⬇ Report to Admin if no files`\n"
 
         # Display the UI with folders
