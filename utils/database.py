@@ -3,14 +3,14 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from a .env file
-load_dotenv()
-
+#load_dotenv()
+#user=postgres.vpzreiwdcoyaobicckun password=[YOUR-PASSWORD] host=aws-0-ap-south-1.pooler.supabase.com port=6543 dbname=postgres
 DATABASE_URL = {
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "database": os.getenv("DB_NAME"),
-    "host": os.getenv("DB_HOST"),
-    "port": os.getenv("DB_PORT")
+    "user": "postgres.vpzreiwdcoyaobicckun",
+    "password": "4Rczj78ezNTFm?YK",
+    "database": "postgres",
+    "host": "aws-0-ap-south-1.pooler.supabase.com",
+    "port": 6543
 }
 
 async def connect_to_db():
