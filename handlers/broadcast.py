@@ -2,7 +2,7 @@ import logging
 from aiogram import types
 from config import ADMIN_IDS
 from middlewares.authorization import is_private_chat
-from utils.database import fetch_all, execute
+from utils.database import fetch_users, execute
 
 async def broadcast_message(message: types.Message):
     if not is_private_chat(message):
@@ -21,7 +21,7 @@ async def broadcast_message(message: types.Message):
     try:
         # Fetch all users from the database
         users_query = 'SELECT user_id FROM users'
-        user_ids = await fetch_all(users_query)
+        user_ids = await fetch_users(users_query)
 
         # Send the broadcast message to all users
         for user_id in user_ids:
