@@ -80,8 +80,14 @@ def restart_script():
         if os.path.exists(FLAG_FILE_PATH):
             os.remove(FLAG_FILE_PATH)
 
-# Main sync function
+STOP_FLAG_FILE_PATH = 'stop_flag.tmp'
+
 def sync_database(api_key, db_owner, db_name, db_path):
+    # Check if the bot is being stopped, if so, skip the sync process
+    if os.path.exists(STOP_FLAG_FILE_PATH):
+        print("Bot is in stop process. Skipping database sync.")
+        return
+    
     temp_db_path = db_path + '.tmp'
     
     # Download the new database
