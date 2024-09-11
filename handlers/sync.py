@@ -52,17 +52,24 @@ def replace_local_database(db_path, temp_db_path):
     else:
         print(f"Temporary database file not found: {temp_db_path}")
 
+STOP_FLAG_FILE_PATH = 'stop_flag.tmp'
+
 # Function to restart the script using subprocess
 def restart_script():
-    # Check if a manual stop was initiated
-    if os.path.exists(FLAG_FILE_PATH):
-        print("Script already in the process of restarting or stopping. Skipping restart.")
+    # Check if the bot was manually stopped
+    if os.path.exists(STOP_FLAG_FILE_PATH):
+        print("Manual stop detected. Skipping restart.")
         return
 
+    # Check if a restart is already in progress
+    if os.path.exists(FLAG_FILE_PATH):
+        print("Script already in the process of restarting. Skipping restart.")
+        return
+    
     # Create the flag file to indicate a restart is in progress
     with open(FLAG_FILE_PATH, 'w') as flag_file:
         flag_file.write('restart')
-    
+
     print("Restarting script...")
     try:
         subprocess.run([sys.executable] + sys.argv, check=True)

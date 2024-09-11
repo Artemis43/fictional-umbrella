@@ -7,12 +7,18 @@ from utils.database import cursor, conn
 from handlers.sync import FLAG_FILE_PATH
 import os
 
+STOP_FLAG_FILE_PATH = 'stop_flag.tmp'
+
 async def stop(message: types.Message):
     from main import bot
-
+    
     # Prevent the restart logic when stopping the bot manually
     if os.path.exists(FLAG_FILE_PATH):
         os.remove(FLAG_FILE_PATH)
+
+    # Create the stop flag to signal that the bot is stopped manually
+    with open(STOP_FLAG_FILE_PATH, 'w') as stop_file:
+        stop_file.write('stopped')
 
     if not is_private_chat(message):
         return
@@ -33,10 +39,6 @@ async def stop(message: types.Message):
         logging.error(f"Error sending backup file: {e}")
         await message.reply("Error sending backup file. Please try again later.")
 
-    # Safely shut down the bot instead of using sys.exit()
-    print("Stopping bot gracefully...")
-    await bot.session.close()  # Close bot session
-    await bot.shutdown()  # Shutdown the bot
-
-    # Manually raise a SystemExit to stop the bot
-    raise SystemExit("Bot stopped by admin command.")
+    # Use sys.exit() to stop the bot
+    print("Bot is stopping with sys.exit()...")
+    sys.exit("Bot stopped by admin command.")
