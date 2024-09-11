@@ -15,7 +15,7 @@ async def stop(message: types.Message):
     user_exists = cursor.fetchone()
 
     if not user_exists:
-        await message.reply("You are not authorized to stop the bot.")
+        await message.reply("You need to start the bot first.")
         return
     
     # Prevent the restart logic when stopping the bot manually

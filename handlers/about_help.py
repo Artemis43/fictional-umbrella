@@ -8,7 +8,7 @@ async def help(message: types.Message):
         return
     user_id = message.from_user.id
     if not await is_user_member(user_id):
-        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every day 👻\n\nPlease join our update channels and help us grow our community 😉\n"
         for channel in REQUIRED_CHANNELS:
             join_message += f"{channel}\n"
         await message.reply(join_message)
@@ -33,18 +33,18 @@ async def about(message: types.Message):
         return
     user_id = message.from_user.id
     if not await is_user_member(user_id):
-        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every day 👻\n\nPlease join our update channels and help us grow our community 😉\n"
         for channel in REQUIRED_CHANNELS:
             join_message += f"{channel}\n"
         await message.reply(join_message)
     else:
         about_text = (
             "**PC Games Bot 🪄**\n\nBots always amazed me. You really never know how few lines of code could change the way you do things\n\n"
-            "I was introduced to FG-repacks very recently, and the very first problem I encountered was the time needed for downloading of files... 😑\n"
+            "I was introduced to FG-repacks recently, and the very first problem I encountered was the time needed for downloading of files... 😑\n"
             "So, here it is. I made this bot to save your time downloading torrents 🙌\n\nHope this helps those curious and enthusiastic gamers out there 😄\n\nIn the end, I always recommend purchasing these games 👾\n\n"
-            "This is the first bot I made. It took me 20 long days to make this bot working as it is now. The games are added automatically at regular intervals and our Archive is ever-growing 🔥\n\n"
-            "Platform - `Render`\n"
-            "Usage limit - `0.1 CPU|512 MB (RAM)`\n\n"
+            "This is the first bot I made. It took me 50 long days to make this bot. I had to manage my studies as well 😅\n\n"
+            #"Platform - `Render`\n"
+            #"Usage limit - `0.1 CPU|512 MB (RAM)`\n\n"
             "Happy Gaming 💥"
         )
         await message.reply(about_text, parse_mode='Markdown')

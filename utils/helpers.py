@@ -36,7 +36,7 @@ async def send_or_edit_message():
 
     # Format the message
     folder_list = "\n\n".join([folder[0] for folder in folders])
-    message_text = f"**Games uploaded in Bot:**\n\n`{folder_list}`\n\nAny issues: [Report](https://t.me/Fitgirl_adminbot)"
+    message_text = f"**Games uploaded in Bot:**\n\n`{folder_list}`\n\nAny issues: [Report](https://t.me/Art3mis_adminbot)"
 
     # Check if we have already sent a message in this topic
     cursor.execute('SELECT message_id FROM bot_messages WHERE chat_id = ? AND topic_id = ?', (GROUP_USERNAME, TOPIC_ID))

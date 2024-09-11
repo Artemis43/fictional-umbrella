@@ -50,11 +50,13 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Compose the UI message text
     text = (
         f"**Welcome to PC Games Bot 🪄**\n\n"
-        f"**New game added every day 👾**\n\n"
-        f"**Complete List of Games:** [Here](https://t.me/fitgirl_repacks_pc/2560)\n\n"
-        f"**How to Use:** /help\n\n"
+        f"**Quick Links:**\n\n"
+        f"• [List of Games](https://t.me/fitgirl_repacks_pc/2560)\n"
+        f"• [Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        f"• How to Use: /help\n"
         f"**📁 Total Games:** {folder_count}\n\n"
-        f"**Games: (Select letter 👇)**\n\n"
+        f"*⟫ If the total count is 0, try again after 20 secs.\n\n"
+        f"▯▮▯▮▯▮▯▮▯▮▯▮▯▮\n\n"
     )
 
     # Initialize folders as an empty list to avoid UnboundLocalError
@@ -70,8 +72,9 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
     # Check if there are no folders
     if not folders:
-        text += "Database sync in Progress 🔄\n"
-        text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        #text += "Database sync in Progress 🔄\n"
+        #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        text += f"▯▮▯▮▯▮▯▮▯▮▯▮▯▮\n\n"
         text += "`⬇ Report to Admin if no files`\n"
         
         # Display the UI even if there are no folders
@@ -103,7 +106,8 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         
         # Files information
         #text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
-        text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+        text += f"▯▮▯▮▯▮▯▮▯▮▯▮▯▮\n\n"
         text += "`⬇ Report to Admin if no files`\n"
 
         # Display the UI with folders
@@ -122,7 +126,7 @@ async def process_callback_1(callback_query: types.CallbackQuery):
     user_id = callback_query.from_user.id
 
     if not await is_user_member(user_id):
-        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every day 👻\n\nPlease join our update channels and help us grow our community 😉\n"
         for channel in REQUIRED_CHANNELS:
             join_message += f"{channel}\n"
         await bot.answer_callback_query(callback_query.id)
@@ -164,7 +168,7 @@ async def start(message: types.Message):
     
     # Commented out the old code
     # if not await is_user_member(user_id):
-    #     join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+    #     join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every day 👻\n\nPlease join our update channels and help us grow our community 😉\n"
     #     for channel in REQUIRED_CHANNELS:
     #         join_message += f"{channel}\n"
     #     await message.reply(join_message)
@@ -177,7 +181,7 @@ async def start(message: types.Message):
         await asyncio.sleep(3)
         await bot.delete_message(message.chat.id, sticker_msg.message_id)
         #await asyncio.sleep(1)
-        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every 3 hours 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every day 👻\n\nPlease join our update channels and help us grow our community 😉\n"
         keyboard = InlineKeyboardMarkup(row_width=1)
         for channel in REQUIRED_CHANNELS:
             button = InlineKeyboardButton(text=channel, url=f"https://t.me/{channel.lstrip('@')}")
