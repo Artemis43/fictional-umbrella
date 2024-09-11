@@ -16,13 +16,11 @@ async def help(message: types.Message):
         help_text = (
             "**PC Games Bot 🪄**\n\n"
             "**💫 How to Use:**\n\n"
-            "|- Search for your game in the list\n\n"
-            "|- Tap on the game name to copy it\n\n"
-            "|- Long press on /get\n\n"
+            "|- Search for your game in the list using the keyboard\n\n"
             "|- Paste the game name after /get\n\n"
             "|- Send and get your files👌\n\n"
             "**NOTE:\n\n**"
-            "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\nRefer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
+            "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\nRefer: [Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
             "**Happy Gaming 🔥**"
         )
         await message.reply(help_text, parse_mode='Markdown')
@@ -40,9 +38,9 @@ async def about(message: types.Message):
     else:
         about_text = (
             "**PC Games Bot 🪄**\n\nBots always amazed me. You really never know how few lines of code could change the way you do things\n\n"
-            "I was introduced to FG-repacks recently, and the very first problem I encountered was the time needed for downloading of files... 😑\n"
+            "I was introduced to repacks recently, and the very first problem I encountered was the time needed for downloading of files... 😑\n"
             "So, here it is. I made this bot to save your time downloading torrents 🙌\n\nHope this helps those curious and enthusiastic gamers out there 😄\n\nIn the end, I always recommend purchasing these games 👾\n\n"
-            "This is the first bot I made. It took me 50 long days to make this bot. I had to manage my studies as well 😅\n\n"
+            "This is the first bot I made. It took me 2 months to make this bot. I had to manage my studies as well 😅\n\n"
             #"Platform - `Render`\n"
             #"Usage limit - `0.1 CPU|512 MB (RAM)`\n\n"
             "Happy Gaming 💥"

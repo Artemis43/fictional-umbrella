@@ -93,7 +93,7 @@ async def sync_database_command(message: types.Message):
     if not is_private_chat(message):
         return
     if str(message.from_user.id) not in ADMIN_IDS:
-        await message.reply("You are not authorized to stop the bot.")
+        await message.reply("You are not authorized to sync the data.")
         return
     sync_database(api_key=API_KEY , db_owner=DBOWNER, db_name=DBNAME, db_path=DB_FILE_PATH)
     await message.reply("Database has now been synced. You can use the bot now", parse_mode=ParseMode.MARKDOWN)

@@ -34,6 +34,6 @@ async def get_all_files(message: types.Message):
                 for file in files:
                     await bot.send_document(message.chat.id, file[0], caption=file[1])
             else:
-                await message.reply("No files found in the specified folder.")
+                await message.reply("No files found in the specified game.")
         else:
-            await message.reply("Folder not found.")
+            await message.reply("Game not found.")

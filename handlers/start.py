@@ -56,7 +56,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         f"⚡How to Use: /help\n\n"
         f"📁 *Total Games:* {folder_count}\n\n"
         #f"*If the total count is 0, try again after 20 secs.*\n\n"
-        f"———————————————\n\n"
+        f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
     )
 
     # Initialize folders as an empty list to avoid UnboundLocalError
@@ -75,7 +75,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         #text += "Database sync in Progress 🔄\n"
         #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
         text += f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
-        text += "`◉ Report to Admin`\n"
+        text += "`⇓ Report to Admin`\n"
         
         # Display the UI even if there are no folders
         try:
@@ -108,7 +108,8 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         #text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
         #text += "Installation Guide: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
         #text += f"_\n\n"
-        text += "`◉ Report to Admin`\n"
+        text += f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
+        text += "`⇓ Report to Admin`\n"
 
         # Display the UI with folders
         try:

@@ -43,7 +43,3 @@ async def stop(message: types.Message):
 
     # Ensure the bot exits gracefully and does not trigger a restart
     sys.exit("Bot stopped by admin command.")
-
-    await asyncio.sleep(5)
-
-    sys.exit("Bot stopped again :)")

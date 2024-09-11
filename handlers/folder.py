@@ -19,12 +19,12 @@ async def create_folder(message: types.Message):
 
         # Only the admin can create folders
         if str(message.from_user.id) not in ADMIN_IDS:
-            await message.reply("You are not authorized to create folders.")
+            await message.reply("You are not authorized to create games.")
             return
 
         folder_name = message.get_args()
         if not folder_name:
-            await message.reply("Please specify a folder name.")
+            await message.reply("Please specify a game name.")
             return
 
         # Insert the new folder into the database
@@ -36,7 +36,7 @@ async def create_folder(message: types.Message):
 
         await send_or_edit_message()
 
-        await message.reply(f"Folder '{folder_name}' created and set as the current upload folder.")
+        await message.reply(f"Game '{folder_name}' created and set as the current upload folder.")
 
 # Command to rename a folder (Admin only)
 async def rename_folder(message: types.Message):
@@ -50,12 +50,12 @@ async def rename_folder(message: types.Message):
         await message.reply(join_message)
     else:
         if str(message.from_user.id) not in ADMIN_IDS:
-            await message.reply("You are not authorized to rename folders.")
+            await message.reply("You are not authorized to rename games.")
             return
 
         args = message.get_args().split(',')
         if len(args) != 2:
-            await message.reply("Please specify the current folder name and the new folder name in the format: /renamegame <current_name>,<new_name>")
+            await message.reply("Please specify the current game name and the new game name in the format: /renamegame <current_name>,<new_name>")
             return
 
         current_name, new_name = args
@@ -67,9 +67,9 @@ async def rename_folder(message: types.Message):
             # Update the folder name in the database
             cursor.execute('UPDATE folders SET name = ? WHERE id = ?', (new_name, folder_id[0]))
             conn.commit()
-            await message.reply(f"Folder '{current_name}' has been renamed to '{new_name}'.")
+            await message.reply(f"Game '{current_name}' has been renamed to '{new_name}'.")
         else:
-            await message.reply("Folder not found.")
+            await message.reply("Game not found.")
 
 
 # Command to delete a folder and its contents (Admin only)
@@ -85,12 +85,12 @@ async def delete_folder(message: types.Message):
         await message.reply(join_message)
     else:
         if str(message.from_user.id) not in ADMIN_IDS:
-            await message.reply("You are not authorized to delete folders.")
+            await message.reply("You are not authorized to delete games.")
             return
 
         folder_name = message.get_args()
         if not folder_name:
-            await message.reply("Please specify a folder name.")
+            await message.reply("Please specify a game name.")
             return
 
         # Get the folder ID to be deleted
@@ -114,6 +114,6 @@ async def delete_folder(message: types.Message):
 
             await send_or_edit_message()
 
-            await message.reply(f"Folder '{folder_name}' and its contents deleted.")
+            await message.reply(f"Game '{folder_name}' and its contents deleted.")
         else:
-            await message.reply("Folder not found.")
+            await message.reply("Game not found.")
