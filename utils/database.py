@@ -3,7 +3,7 @@ import logging
 from typing import Optional
 
 # Connection details
-DATABASE_URL = "postgresql://user=postgres.vpzreiwdcoyaobicckun password=[YOUR-PASSWORD] host=aws-0-ap-south-1.pooler.supabase.com port=6543 dbname=postgres"
+DATABASE_URL = "postgresql://user=postgres.vpzreiwdcoyaobicckun password=4Rczj78ezNTFm?YK host=aws-0-ap-south-1.pooler.supabase.com port=6543 dbname=postgres"
 
 # Database connection pool
 pool: Optional[asyncpg.pool.Pool] = None
