@@ -25,7 +25,7 @@ async def stop(message: types.Message):
     conn.commit()
 
     # Path to the database file
-    db_file_path = 'file_management.db'
+    db_file_path = 'game_management.db'
     
     try:
         await bot.send_document(message.chat.id, types.InputFile(db_file_path))

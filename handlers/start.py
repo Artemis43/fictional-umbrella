@@ -57,6 +57,9 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         f"**Games: (Select letter 👇)**\n\n"
     )
 
+    # Initialize folders as an empty list to avoid UnboundLocalError
+    folders = []
+
     # Fetch and list folders and files based on the current folder or selected letter
     if selected_letter:
         if selected_letter == "#":
@@ -64,12 +67,6 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         else:
             cursor.execute('SELECT name FROM folders WHERE parent_id IS NULL AND name LIKE ? ORDER BY name', (f'{selected_letter}%',))
         folders = cursor.fetchall()
-        cursor.execute('SELECT file_name FROM files WHERE folder_id IS NULL ORDER BY file_name')
-        files = cursor.fetchall()
-
-        # Add folders and files to the text
-        for folder in folders:
-            text += f"|-📁 `{folder[0]}`\n\n"
 
     # Check if there are no folders
     if not folders:
@@ -98,6 +95,10 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
         else:
             print("Sync was recently performed. Please try again later.")
     else:
+        # Add folders to the text
+        for folder in folders:
+            text += f"|-📁 `{folder[0]}`\n\n"
+        
         # Files information
         text += "`Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.`\n\n"
         text += "Refer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n"
