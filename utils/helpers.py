@@ -12,30 +12,6 @@ def get_current_upload_folder(user_id):
     from main import current_upload_folders
     return current_upload_folders.get(user_id)
 
-# Function to set the DB upload await state
-def set_bot_state(key: str, value: bool):
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO bot_state (key, value) VALUES (%s, %s)
-        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
-    ''', (key, int(value)))  # Cast value to int (0/1 for boolean)
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-# Function to get the DB upload await state
-def get_bot_state(key: str) -> bool:
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT value FROM bot_state WHERE key = %s', (key,))
-    result = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    if result:
-        return bool(result[0])
-    return False
-
 # Function to send or edit the list of folders in a message
 async def send_or_edit_message():
     from main import app

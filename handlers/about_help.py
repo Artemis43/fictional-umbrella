@@ -37,9 +37,9 @@ async def about(message: types.Message):
         await message.reply(join_message)
     else:
         about_text = (
-            "*PC Games Bot 🥳*\n\n"
+            "*PC Games Bot* 🥳\n\n"
             "Bots always amazed me, so I though of creating one. Managing my studies and creating this bot was difficult 🥲\n"
-            "This bot still has a lot of scope for development and automation though ^_____^\n\n"
+            "This bot still has a lot of scope for development and automation though\n\n"
             "Happy Gaming 💥"
         )
         await message.reply(about_text, parse_mode='Markdown')

@@ -16,8 +16,6 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     # Fetch the number of files and folders
     cursor.execute('SELECT COUNT(*) FROM folders')
     folder_count = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM files')
-    file_count = cursor.fetchone()[0]
 
     # Visual representation of the current location
     current_path = "Root"
@@ -49,9 +47,9 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     text = (
         f"*Welcome to PC Games Bot 🪄*\n\n"
         f"Quick Links:\n"
-        f"[List of Games](https://t.me/fitgirl_repacks_pc/2560/2569)\n"
-        f"[Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n"
-        f"How to Use: /help\n\n"
+        f"⚡[List of Games](https://t.me/fitgirl_repacks_pc/2560/2569)\n"
+        f"⚡[Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n"
+        f"⚡How to Use: /help\n\n"
         f"📁 Total Games: {folder_count}\n\n"
         f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
     )
@@ -64,14 +62,11 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
             cursor.execute('SELECT name FROM folders WHERE parent_id IS NULL AND name LIKE %s ORDER BY name', (f'{selected_letter}%',))
         folders = cursor.fetchall()
 
-        cursor.execute('SELECT file_name FROM files WHERE folder_id IS NULL ORDER BY file_name')
-        files = cursor.fetchall()
-
         # Add folders and files to the text
         for folder in folders:
-            text += f"|-🎯 {folder[0]}\n\n"
+            text += f"|-🎯 `{folder[0]}`\n"
     
-    text += "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n⇓ Report to Admin"
+    text += "\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n`⇓ Report to Admin`"
 
     try:
         if message_id:

@@ -47,15 +47,7 @@ def initialize_database():
         message_id INTEGER
     )
     ''')
-
-    # Create bot_state table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS bot_state (
-        key TEXT PRIMARY KEY,  -- The name of the state (e.g., 'awaiting_new_db_upload')
-        value INTEGER  -- The value of the state (e.g., 0 or 1)
-    )
-    ''')
-
+    
     # Commit changes
     conn.commit()
 
