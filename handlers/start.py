@@ -47,10 +47,10 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     text = (
         f"*Welcome to PC Games Bot 🪄*\n\n"
         f"Quick Links:\n"
-        f"⚡[List of Games](https://t.me/fitgirl_repacks_pc/2560/2569)\n"
-        f"⚡[Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n"
-        f"⚡How to Use: /help\n\n"
-        f"📁 Total Games: {folder_count}\n\n"
+        f"🔥 [List of Games](https://t.me/fitgirl_repacks_pc/2560/2569)\n"
+        f"📖 [Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n"
+        f"🍃 How to Use: /help\n\n"
+        f"• Total Games: {folder_count}\n\n"
         f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
     )
 
@@ -64,7 +64,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
         # Add folders and files to the text
         for folder in folders:
-            text += f"|-🎯 `{folder[0]}`\n"
+            text += f"|-📁 `{folder[0]}`\n"
     
     text += "\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n`⇓ Report to Admin`"
 
