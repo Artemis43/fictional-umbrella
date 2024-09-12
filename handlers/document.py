@@ -1,10 +1,7 @@
-import os
-import shutil
-import sys
 from aiogram import types
 from middlewares.authorization import is_private_chat, is_user_member
 from config import REQUIRED_CHANNELS, ADMIN_IDS, DB_FILE_PATH, CHANNEL_ID
-from utils.helpers import get_bot_state, set_bot_state, get_current_upload_folder
+from utils.helpers import get_current_upload_folder
 from utils.database import connect_db
 
 # Handler for incoming documents
@@ -25,41 +22,6 @@ async def handle_document(message: types.Message):
             join_message += f"{channel}\n"
         await message.reply(join_message)
         return
-
-    # Check if awaiting a new DB upload
-    if get_bot_state('awaiting_new_db_upload') and message.document.file_name == "game_management.db":
-        if str(user_id) not in ADMIN_IDS:
-            set_bot_state('awaiting_new_db_upload', False)
-            await message.reply("You are not authorized to upload a new database file.")
-            return
-
-        # Define the path to the old and new database files
-        old_db_path = DB_FILE_PATH
-        new_file_path = f"new_{message.document.file_name}"
-
-        # Download the new database file
-        await message.document.download(destination_file=new_file_path)
-
-        try:
-            # Delete the old database file
-            if os.path.exists(old_db_path):
-                os.remove(old_db_path)
-                await message.reply("Old database file deleted successfully.")
-            else:
-                await message.reply("Old database file not found. Proceeding with the replacement.")
-
-            # Move the new file to replace the old database
-            shutil.move(new_file_path, DB_FILE_PATH)
-            set_bot_state('awaiting_new_db_upload', False)
-            await message.reply("Database file replaced successfully. Restarting the bot to apply changes.")
-
-            # Restart the bot to apply the new database changes
-            os.execl(sys.executable, sys.executable, *sys.argv)
-        except Exception as e:
-            set_bot_state('awaiting_new_db_upload', False)
-            await message.reply(f"An error occurred while replacing the database file: {e}")
-            return
-
     # Existing document handling code
     # Only admins can upload files, so check admin authorization
     if str(message.from_user.id) not in ADMIN_IDS:

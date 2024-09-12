@@ -18,9 +18,6 @@ CHANNEL_ID = os.environ.get('CHANNEL')
 # Sticker
 STICKER_ID = os.environ.get('STICKER')
 
-# Database file
-DB_FILE_PATH = 'game_management.db'
-
 # To update games list (Without @)
 GROUP_USERNAME = 'fitgirl_repacks_pc'
 
@@ -38,9 +35,5 @@ WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 # List of required channels to join
 REQUIRED_CHANNELS = os.environ.get('SUBSCRIPTION').split(',')
 
-# DBHub.io Credentials
-API_KEY = os.environ.get('DB_API')
-DBOWNER = 'norse'
-DBNAME = 'game_management.db'
-
-POSTGRES_CONNECTION_STRING = "user=postgres.vpzreiwdcoyaobicckun password=4Rczj78ezNTFm?YK host=aws-0-ap-south-1.pooler.supabase.com port=6543 dbname=postgres"
+# Supabase Connection String
+POSTGRES_CONNECTION_STRING = os.environ.get('DB_STRING')

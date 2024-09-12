@@ -32,7 +32,7 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
     alphabet_buttons = [InlineKeyboardButton(letter, callback_data=f'letter_{letter}') for letter in alphabet]
 
     # Add a button for symbols
-    alphabet_buttons.insert(0, InlineKeyboardButton("❗", url='https://t.me/Fitgirl_adminbot'))
+    alphabet_buttons.insert(0, InlineKeyboardButton("❗", url='https://t.me/Art3mis_adminbot'))
 
     # Add alphabet buttons in rows of 5-6 buttons per row
     row_width = 7
@@ -47,12 +47,13 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
     # Compose the UI message text
     text = (
-        f"**Welcome to The Fitgirl Bot 🪄**\n\n"
-        f"**New game added every 3 hrs 👾**\n\n"
-        f"**Complete List of Games:** [Here](https://t.me/fitgirl_repacks_pc/2560)\n\n"
-        f"**How to Use:** /help\n\n"
-        f"**📁 Total Games:** {folder_count}\n\n"
-        f"**Games: (Select letter 👇)**\n\n"
+        f"*Welcome to PC Games Bot 🪄*\n\n"
+        f"Quick Links:\n"
+        f"[List of Games](https://t.me/fitgirl_repacks_pc/2560/2569)\n"
+        f"[Installation Guide](https://t.me/fitgirl_repacks_pc/969/970)\n"
+        f"How to Use: /help\n\n"
+        f"📁 Total Games: {folder_count}\n\n"
+        f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n"
     )
 
     # Fetch and list folders and files based on the current folder or selected letter
@@ -68,9 +69,9 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
         # Add folders and files to the text
         for folder in folders:
-            text += f"|-📁 {folder[0]}\n\n"
+            text += f"|-🎯 {folder[0]}\n\n"
     
-    text += "Files are in .bin form\nDue to Telegram's restrictions, they are split into 2 GB or 4 GB files. Merge them before install.\n\nRefer: [Click here](https://t.me/fitgirl_repacks_pc/969/970)\n\n⬇ Report to Admin if no files"
+    text += "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n⇓ Report to Admin"
 
     try:
         if message_id:
@@ -82,6 +83,45 @@ async def send_ui(chat_id, message_id=None, current_folder=None, selected_letter
 
     cursor.close()
     conn.close()
+
+#Callback Query handler to filter UI based on inline selections
+async def process_callback_1(callback_query: types.CallbackQuery):
+    from main import bot
+    global current_upload_folder
+    user_id = callback_query.from_user.id
+
+    if not await is_user_member(user_id):
+        join_message = "Welcome to PC Games Bot 🪄\n\nI have repacked PC game files downloaded from original sources 👾\n\nA new game uploaded every day 👻\n\nPlease join our update channels and help us grow our community 😉\n"
+        for channel in REQUIRED_CHANNELS:
+            join_message += f"{channel}\n"
+        await bot.answer_callback_query(callback_query.id)
+        await bot.send_message(callback_query.from_user.id, join_message)
+        return
+
+    code = callback_query.data
+
+    if code == 'back':
+        current_upload_folder = None
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id)
+    elif code == 'root':
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id)
+    elif code.startswith('letter_'):
+        selected_letter = code.split('_')[1]
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id, selected_letter=selected_letter)
+    else:
+        current_upload_folder = code
+        await send_ui(callback_query.from_user.id, callback_query.message.message_id, current_folder=current_upload_folder)
+
+    await bot.answer_callback_query(callback_query.id)
+
+# Callback query handler for inline buttons
+async def process_callback_2(callback_query: types.CallbackQuery):
+    if callback_query.data == 'back':
+        # Logic to go back to the previous folder
+        await send_ui(callback_query.message.chat.id)  # This should be updated with the actual previous folder logic
+    elif callback_query.data == 'root':
+        await send_ui(callback_query.message.chat.id)
+    # Handle other callback data if necessary
 
 # Command to start the bot and show the UI
 async def start(message: types.Message):

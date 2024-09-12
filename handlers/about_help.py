@@ -37,12 +37,9 @@ async def about(message: types.Message):
         await message.reply(join_message)
     else:
         about_text = (
-            "**PC Games Bot 🪄**\n\nBots always amazed me. You really never know how few lines of code could change the way you do things\n\n"
-            "I was introduced to repacks recently, and the very first problem I encountered was the time needed for downloading of files... 😑\n"
-            "So, here it is. I made this bot to save your time downloading torrents 🙌\n\nHope this helps those curious and enthusiastic gamers out there 😄\n\nIn the end, I always recommend purchasing these games 👾\n\n"
-            "This is the first bot I made. It took me 2 months to make this bot. I had to manage my studies as well 😅\n\n"
-            #"Platform - `Render`\n"
-            #"Usage limit - `0.1 CPU|512 MB (RAM)`\n\n"
+            "*PC Games Bot 🥳*\n\n"
+            "Bots always amazed me, so I though of creating one. Managing my studies and creating this bot was difficult 🥲\n"
+            "This bot still has a lot of scope for development and automation though ^_____^\n\n"
             "Happy Gaming 💥"
         )
         await message.reply(about_text, parse_mode='Markdown')

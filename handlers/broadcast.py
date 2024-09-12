@@ -1,21 +1,28 @@
 import logging
 from aiogram import types
-from config import ADMIN_IDS
 from middlewares.authorization import is_private_chat
-from utils.database import cursor
+from config import ADMIN_IDS
+from utils.database import connect_db
 
+# Async function to broadcast a message to all users
 async def broadcast_message(message: types.Message):
     if not is_private_chat(message):
         return
     from main import bot
+
+    # Only admins can broadcast messages
     if str(message.from_user.id) not in ADMIN_IDS:
         await message.reply("You are not authorized to send broadcasts.")
         return
 
+    # Get the message to broadcast
     broadcast_message = message.get_args()
     if not broadcast_message:
         await message.reply("Please provide a message to broadcast.")
         return
+
+    conn = connect_db()
+    cursor = conn.cursor()
 
     try:
         # Fetch all users from the database
@@ -33,3 +40,6 @@ async def broadcast_message(message: types.Message):
     except Exception as e:
         logging.error(f"Error fetching users: {e}")
         await message.reply("Error fetching users. Please try again later.")
+    finally:
+        cursor.close()
+        conn.close()

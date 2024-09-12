@@ -1,4 +1,3 @@
-import logging
 from pyrogram.errors import MessageNotModified
 from utils.database import connect_db
 from config import GROUP_USERNAME, TOPIC_ID, WEBHOOK_URL
@@ -49,7 +48,7 @@ async def send_or_edit_message():
 
     # Format the message
     folder_list = "\n\n".join([folder[0] for folder in folders])
-    message_text = f"**Games uploaded in Bot:**\n\n`{folder_list}`\n\nAny issues: [Report](https://t.me/Art3mis_adminbot)"
+    message_text = f"**Games available in Bot:**\n@OfficialPcGamesBot\n\n`{folder_list}`\n\nAny issues: [Report](https://t.me/Art3mis_adminbot)"
 
     # Check if we have already sent a message in this topic
     cursor.execute('SELECT message_id FROM bot_messages WHERE chat_id = %s AND topic_id = %s', (GROUP_USERNAME, TOPIC_ID))
@@ -74,7 +73,7 @@ async def send_or_edit_message():
 
     cursor.close()
     conn.close()
-    
+
 # Function to add user to the database
 def add_user_to_db(user_id):
     conn = connect_db()
