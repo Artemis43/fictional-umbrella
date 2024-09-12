@@ -1,60 +1,67 @@
-import sqlite3
-from config import DB_FILE_PATH, ADMIN_IDS
+import psycopg2
+from config import POSTGRES_CONNECTION_STRING
 
-# Connect to the SQLite database
-conn = sqlite3.connect(DB_FILE_PATH)
-cursor = conn.cursor()
+# Connect to PostgreSQL database
+def connect_db():
+    return psycopg2.connect(POSTGRES_CONNECTION_STRING)
 
-# Create tables for folders and files
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS folders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    parent_id INTEGER,
-    FOREIGN KEY (parent_id) REFERENCES folders (id)
-)
-''')
+def initialize_database():
+    conn = connect_db()
+    cursor = conn.cursor()
 
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS files (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    file_id TEXT NOT NULL,
-    file_name TEXT NOT NULL,
-    folder_id INTEGER,
-    message_id INTEGER,
-    FOREIGN KEY (folder_id) REFERENCES folders (id)
-)
-''')
-conn.commit()
+    # Create folders table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS folders (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        parent_id INTEGER,
+        FOREIGN KEY (parent_id) REFERENCES folders (id) ON DELETE SET NULL
+    )
+    ''')
 
-# Create table for users for broadcast
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS users (
-    user_id INTEGER PRIMARY KEY
-)
-''')
-conn.commit()
+    # Create files table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS files (
+        id SERIAL PRIMARY KEY,
+        file_id TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        folder_id INTEGER,
+        message_id INTEGER,
+        FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE CASCADE
+    )
+    ''')
 
-# Ensure table for storing message ID
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS bot_messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    chat_id TEXT,
-    topic_id INTEGER,
-    message_id INTEGER
-)
-''')
-conn.commit()
+    # Create users table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        user_id BIGINT PRIMARY KEY
+    )
+    ''')
 
-# Table to store global bot states
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS bot_state (
-    key TEXT PRIMARY KEY,  -- The name of the state (e.g., 'awaiting_new_db_upload')
-    value INTEGER  -- The value of the state (e.g., 0 or 1)
-)
-''')
-conn.commit()
+    # Create bot_messages table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS bot_messages (
+        id SERIAL PRIMARY KEY,
+        chat_id TEXT,
+        topic_id INTEGER,
+        message_id INTEGER
+    )
+    ''')
 
-def add_user_to_db(user_id):
-    cursor.execute('INSERT OR IGNORE INTO users (user_id) VALUES (?)', (user_id,))
+    # Create bot_state table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS bot_state (
+        key TEXT PRIMARY KEY,  -- The name of the state (e.g., 'awaiting_new_db_upload')
+        value INTEGER  -- The value of the state (e.g., 0 or 1)
+    )
+    ''')
+
+    # Commit changes
     conn.commit()
+
+    # Close the connection
+    cursor.close()
+    conn.close()
+
+if __name__ == "__main__":
+    initialize_database()

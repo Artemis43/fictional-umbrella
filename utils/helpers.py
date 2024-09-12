@@ -1,6 +1,7 @@
-from utils.database import cursor, conn
+import logging
 from pyrogram.errors import MessageNotModified
-from config import GROUP_USERNAME, TOPIC_ID
+from utils.database import connect_db
+from config import GROUP_USERNAME, TOPIC_ID, WEBHOOK_URL
 
 # Function to set the current upload folder for a user
 def set_current_upload_folder(user_id, folder_name):
@@ -14,22 +15,34 @@ def get_current_upload_folder(user_id):
 
 # Function to set the DB upload await state
 def set_bot_state(key: str, value: bool):
+    conn = connect_db()
+    cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO bot_state (key, value) VALUES (?, ?)
-        ON CONFLICT(key) DO UPDATE SET value = excluded.value
-    ''', (key, int(value)))
+        INSERT INTO bot_state (key, value) VALUES (%s, %s)
+        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+    ''', (key, int(value)))  # Cast value to int (0/1 for boolean)
     conn.commit()
+    cursor.close()
+    conn.close()
 
 # Function to get the DB upload await state
 def get_bot_state(key: str) -> bool:
-    cursor.execute('SELECT value FROM bot_state WHERE key = ?', (key,))
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT value FROM bot_state WHERE key = %s', (key,))
     result = cursor.fetchone()
+    cursor.close()
+    conn.close()
     if result:
         return bool(result[0])
     return False
 
+# Function to send or edit the list of folders in a message
 async def send_or_edit_message():
     from main import app
+    conn = connect_db()
+    cursor = conn.cursor()
+
     # Fetch the list of folders from the database
     cursor.execute('SELECT name FROM folders ORDER BY name ASC')
     folders = cursor.fetchall()
@@ -39,7 +52,7 @@ async def send_or_edit_message():
     message_text = f"**Games uploaded in Bot:**\n\n`{folder_list}`\n\nAny issues: [Report](https://t.me/Art3mis_adminbot)"
 
     # Check if we have already sent a message in this topic
-    cursor.execute('SELECT message_id FROM bot_messages WHERE chat_id = ? AND topic_id = ?', (GROUP_USERNAME, TOPIC_ID))
+    cursor.execute('SELECT message_id FROM bot_messages WHERE chat_id = %s AND topic_id = %s', (GROUP_USERNAME, TOPIC_ID))
     result = cursor.fetchone()
 
     async with app:
@@ -56,5 +69,33 @@ async def send_or_edit_message():
             # We need to send a new message
             sent_message = await app.send_message(chat_id=GROUP_USERNAME, text=message_text, reply_to_message_id=TOPIC_ID)
             # Store the new message ID in the database
-            cursor.execute('INSERT INTO bot_messages (chat_id, topic_id, message_id) VALUES (?, ?, ?)', (GROUP_USERNAME, TOPIC_ID, sent_message.id))
+            cursor.execute('INSERT INTO bot_messages (chat_id, topic_id, message_id) VALUES (%s, %s, %s)', (GROUP_USERNAME, TOPIC_ID, sent_message.id))
             conn.commit()
+
+    cursor.close()
+    conn.close()
+
+# Startup function to set the webhook
+async def on_startup(dispatcher):
+    from main import bot
+    await bot.set_webhook(WEBHOOK_URL)
+
+# Shutdown function to delete the webhook and close the database connection
+async def on_shutdown(dispatcher):
+    from main import bot
+    logging.warning('Shutting down..')
+    await bot.delete_webhook()
+    
+    conn = connect_db()
+    # Close the PostgreSQL connection if needed (e.g., a global connection)
+    conn.close()  # Assuming a global connection is being used
+    logging.warning('Bye!')
+
+# Function to add user to the database
+def add_user_to_db(user_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO users (user_id) VALUES (%s) ON CONFLICT DO NOTHING', (user_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()

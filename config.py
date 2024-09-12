@@ -42,3 +42,5 @@ REQUIRED_CHANNELS = os.environ.get('SUBSCRIPTION').split(',')
 API_KEY = os.environ.get('DB_API')
 DBOWNER = 'norse'
 DBNAME = 'game_management.db'
+
+POSTGRES_CONNECTION_STRING = "user=postgres.vpzreiwdcoyaobicckun password=4Rczj78ezNTFm?YK host=aws-0-ap-south-1.pooler.supabase.com port=6543 dbname=postgres"

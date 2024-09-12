@@ -26,24 +26,24 @@ dp.middleware.setup(LoggingMiddleware())
 # So that all admins can upload files simultaneously
 current_upload_folders = {}
 
-from handlers import start, folder, file, document, download, broadcast, backup, about_help, stop, sync
+from handlers import start, folder, document, download, stop
 
 # Register handlers
 dp.register_message_handler(start.start, commands=['start'])
 dp.register_message_handler(folder.create_folder, commands=['newgame'])
 dp.register_message_handler(folder.rename_folder, commands=['renamegame'])
 dp.register_message_handler(folder.delete_folder, commands=['deletegame'])
-dp.register_message_handler(file.rename_file, commands=['renamefile'])
-dp.register_message_handler(file.delete_file, commands=['deletefile'])
+#dp.register_message_handler(file.rename_file, commands=['renamefile'])
+#dp.register_message_handler(file.delete_file, commands=['deletefile'])
 dp.register_message_handler(document.handle_document, content_types=['document'])
 dp.register_message_handler(download.get_all_files, commands=['get'])
-dp.register_message_handler(broadcast.broadcast_message, commands=['broadcast'])
-dp.register_message_handler(backup.send_backup, commands=['backup'])
-dp.register_message_handler(backup.new_db, commands=['restore'])
-dp.register_message_handler(about_help.help, commands=['help'])
-dp.register_message_handler(about_help.about, commands=['about'])
+#dp.register_message_handler(broadcast.broadcast_message, commands=['broadcast'])
+#dp.register_message_handler(backup.send_backup, commands=['backup'])
+#dp.register_message_handler(backup.new_db, commands=['restore'])
+#dp.register_message_handler(about_help.help, commands=['help'])
+#dp.register_message_handler(about_help.about, commands=['about'])
 dp.register_message_handler(stop.stop, commands=['stop'])
-dp.register_message_handler(sync.sync_database_command, commands=['forcedsyncdb'])
+#dp.register_message_handler(sync.sync_database_command, commands=['forcedsyncdb'])
 dp.register_callback_query_handler(start.process_callback_1, lambda c: c.data)
 dp.register_callback_query_handler(start.process_callback_2, lambda c: c.data)
 
