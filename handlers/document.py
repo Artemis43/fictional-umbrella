@@ -1,6 +1,6 @@
 from aiogram import types
 from middlewares.authorization import is_private_chat, is_user_member
-from config import REQUIRED_CHANNELS, ADMIN_IDS, DB_FILE_PATH, CHANNEL_ID
+from config import REQUIRED_CHANNELS, ADMIN_IDS, CHANNEL_ID
 from utils.helpers import get_current_upload_folder
 from utils.database import connect_db
 

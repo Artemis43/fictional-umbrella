@@ -1,6 +1,6 @@
 from pyrogram.errors import MessageNotModified
 from utils.database import connect_db
-from config import GROUP_USERNAME, TOPIC_ID, WEBHOOK_URL
+from config import GROUP_USERNAME, TOPIC_ID
 
 # Function to set the current upload folder for a user
 def set_current_upload_folder(user_id, folder_name):
