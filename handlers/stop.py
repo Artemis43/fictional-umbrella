@@ -1,11 +1,7 @@
-import logging
 import sys
 from aiogram import types
 from middlewares.authorization import is_private_chat
 from config import ADMIN_IDS
-from utils.database import cursor, conn
-from handlers.sync import FLAG_FILE_PATH
-import os
 
 async def stop(message: types.Message):
     from main import bot
