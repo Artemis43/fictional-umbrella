@@ -74,23 +74,7 @@ async def send_or_edit_message():
 
     cursor.close()
     conn.close()
-
-# Startup function to set the webhook
-async def on_startup(dispatcher):
-    from main import bot
-    await bot.set_webhook(WEBHOOK_URL)
-
-# Shutdown function to delete the webhook and close the database connection
-async def on_shutdown(dispatcher):
-    from main import bot
-    logging.warning('Shutting down..')
-    await bot.delete_webhook()
     
-    conn = connect_db()
-    # Close the PostgreSQL connection if needed (e.g., a global connection)
-    conn.close()  # Assuming a global connection is being used
-    logging.warning('Bye!')
-
 # Function to add user to the database
 def add_user_to_db(user_id):
     conn = connect_db()

@@ -31,8 +31,8 @@ from handlers import start, folder, document, download, stop
 # Register handlers
 dp.register_message_handler(start.start, commands=['start'])
 dp.register_message_handler(folder.create_folder, commands=['newgame'])
-dp.register_message_handler(folder.rename_folder, commands=['renamegame'])
-dp.register_message_handler(folder.delete_folder, commands=['deletegame'])
+#dp.register_message_handler(folder.rename_folder, commands=['renamegame'])
+#dp.register_message_handler(folder.delete_folder, commands=['deletegame'])
 #dp.register_message_handler(file.rename_file, commands=['renamefile'])
 #dp.register_message_handler(file.delete_file, commands=['deletefile'])
 dp.register_message_handler(document.handle_document, content_types=['document'])
